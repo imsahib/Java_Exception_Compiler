@@ -1,0 +1,508 @@
+Terminals unused in grammar
+
+   '+'
+   '-'
+   '*'
+   '/'
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: try_statement
+
+    2 statement_list: /* empty */
+    3               | statement_list statement
+
+    4 statement: try_statement
+    5          | simple_statement
+
+    6 try_statement: TRY block catch_clauses finally_clause
+    7              | TRY block catch_clauses
+
+    8 catch_clauses: /* empty */
+    9              | catch_clauses catch_clause
+
+   10 catch_clause: catch_formal_param block
+
+   11 catch_formal_param: CATCH '(' IDENTIFIER IDENTIFIER ')'
+   12                   | CATCH '(' IDENTIFIER ')'
+
+   13 finally_clause: FINALLY block
+
+   14 block: '{' statement_list '}'
+
+   15 simple_statement: expression_statement
+   16                 | print_statement
+
+   17 expression_statement: THROW IDENTIFIER ';'
+   18                     | IDENTIFIER IDENTIFIER '=' INTEGER_LITERAL OPERATOR INTEGER_LITERAL ';'
+   19                     | IDENTIFIER '=' INTEGER_LITERAL ';'
+   20                     | IF '(' IDENTIFIER OPERATOR IDENTIFIER ')' block
+
+   21 print_statement: PRINT '(' STRING_LITERAL ')' ';'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 11 12 20 21
+')' (41) 11 12 20 21
+'*' (42)
+'+' (43)
+'-' (45)
+'/' (47)
+';' (59) 17 18 19 21
+'=' (61) 18 19
+'{' (123) 14
+'}' (125) 14
+error (256)
+IDENTIFIER (258) 11 12 17 18 19 20
+INTEGER_LITERAL (259) 18 19
+STRING_LITERAL (260) 21
+TRY (261) 6 7
+CATCH (262) 11 12
+FINALLY (263) 13
+THROW (264) 17
+PRINT (265) 21
+OPERATOR (266) 18 20
+IF (267) 20
+
+
+Nonterminals, with rules where they appear
+
+$accept (23)
+    on left: 0
+program (24)
+    on left: 1, on right: 0
+statement_list (25)
+    on left: 2 3, on right: 3 14
+statement (26)
+    on left: 4 5, on right: 3
+try_statement (27)
+    on left: 6 7, on right: 1 4
+catch_clauses (28)
+    on left: 8 9, on right: 6 7 9
+catch_clause (29)
+    on left: 10, on right: 9
+catch_formal_param (30)
+    on left: 11 12, on right: 10
+finally_clause (31)
+    on left: 13, on right: 6
+block (32)
+    on left: 14, on right: 6 7 10 13 20
+simple_statement (33)
+    on left: 15 16, on right: 5
+expression_statement (34)
+    on left: 17 18 19 20, on right: 15
+print_statement (35)
+    on left: 21, on right: 16
+
+
+state 0
+
+    0 $accept: . program $end
+
+    TRY  shift, and go to state 1
+
+    program        go to state 2
+    try_statement  go to state 3
+
+
+state 1
+
+    6 try_statement: TRY . block catch_clauses finally_clause
+    7              | TRY . block catch_clauses
+
+    '{'  shift, and go to state 4
+
+    block  go to state 5
+
+
+state 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 6
+
+
+state 3
+
+    1 program: try_statement .
+
+    $default  reduce using rule 1 (program)
+
+
+state 4
+
+   14 block: '{' . statement_list '}'
+
+    $default  reduce using rule 2 (statement_list)
+
+    statement_list  go to state 7
+
+
+state 5
+
+    6 try_statement: TRY block . catch_clauses finally_clause
+    7              | TRY block . catch_clauses
+
+    $default  reduce using rule 8 (catch_clauses)
+
+    catch_clauses  go to state 8
+
+
+state 6
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+state 7
+
+    3 statement_list: statement_list . statement
+   14 block: '{' statement_list . '}'
+
+    IDENTIFIER  shift, and go to state 9
+    TRY         shift, and go to state 1
+    THROW       shift, and go to state 10
+    PRINT       shift, and go to state 11
+    IF          shift, and go to state 12
+    '}'         shift, and go to state 13
+
+    statement             go to state 14
+    try_statement         go to state 15
+    simple_statement      go to state 16
+    expression_statement  go to state 17
+    print_statement       go to state 18
+
+
+state 8
+
+    6 try_statement: TRY block catch_clauses . finally_clause
+    7              | TRY block catch_clauses .
+    9 catch_clauses: catch_clauses . catch_clause
+
+    CATCH    shift, and go to state 19
+    FINALLY  shift, and go to state 20
+
+    $default  reduce using rule 7 (try_statement)
+
+    catch_clause        go to state 21
+    catch_formal_param  go to state 22
+    finally_clause      go to state 23
+
+
+state 9
+
+   18 expression_statement: IDENTIFIER . IDENTIFIER '=' INTEGER_LITERAL OPERATOR INTEGER_LITERAL ';'
+   19                     | IDENTIFIER . '=' INTEGER_LITERAL ';'
+
+    IDENTIFIER  shift, and go to state 24
+    '='         shift, and go to state 25
+
+
+state 10
+
+   17 expression_statement: THROW . IDENTIFIER ';'
+
+    IDENTIFIER  shift, and go to state 26
+
+
+state 11
+
+   21 print_statement: PRINT . '(' STRING_LITERAL ')' ';'
+
+    '('  shift, and go to state 27
+
+
+state 12
+
+   20 expression_statement: IF . '(' IDENTIFIER OPERATOR IDENTIFIER ')' block
+
+    '('  shift, and go to state 28
+
+
+state 13
+
+   14 block: '{' statement_list '}' .
+
+    $default  reduce using rule 14 (block)
+
+
+state 14
+
+    3 statement_list: statement_list statement .
+
+    $default  reduce using rule 3 (statement_list)
+
+
+state 15
+
+    4 statement: try_statement .
+
+    $default  reduce using rule 4 (statement)
+
+
+state 16
+
+    5 statement: simple_statement .
+
+    $default  reduce using rule 5 (statement)
+
+
+state 17
+
+   15 simple_statement: expression_statement .
+
+    $default  reduce using rule 15 (simple_statement)
+
+
+state 18
+
+   16 simple_statement: print_statement .
+
+    $default  reduce using rule 16 (simple_statement)
+
+
+state 19
+
+   11 catch_formal_param: CATCH . '(' IDENTIFIER IDENTIFIER ')'
+   12                   | CATCH . '(' IDENTIFIER ')'
+
+    '('  shift, and go to state 29
+
+
+state 20
+
+   13 finally_clause: FINALLY . block
+
+    '{'  shift, and go to state 4
+
+    block  go to state 30
+
+
+state 21
+
+    9 catch_clauses: catch_clauses catch_clause .
+
+    $default  reduce using rule 9 (catch_clauses)
+
+
+state 22
+
+   10 catch_clause: catch_formal_param . block
+
+    '{'  shift, and go to state 4
+
+    block  go to state 31
+
+
+state 23
+
+    6 try_statement: TRY block catch_clauses finally_clause .
+
+    $default  reduce using rule 6 (try_statement)
+
+
+state 24
+
+   18 expression_statement: IDENTIFIER IDENTIFIER . '=' INTEGER_LITERAL OPERATOR INTEGER_LITERAL ';'
+
+    '='  shift, and go to state 32
+
+
+state 25
+
+   19 expression_statement: IDENTIFIER '=' . INTEGER_LITERAL ';'
+
+    INTEGER_LITERAL  shift, and go to state 33
+
+
+state 26
+
+   17 expression_statement: THROW IDENTIFIER . ';'
+
+    ';'  shift, and go to state 34
+
+
+state 27
+
+   21 print_statement: PRINT '(' . STRING_LITERAL ')' ';'
+
+    STRING_LITERAL  shift, and go to state 35
+
+
+state 28
+
+   20 expression_statement: IF '(' . IDENTIFIER OPERATOR IDENTIFIER ')' block
+
+    IDENTIFIER  shift, and go to state 36
+
+
+state 29
+
+   11 catch_formal_param: CATCH '(' . IDENTIFIER IDENTIFIER ')'
+   12                   | CATCH '(' . IDENTIFIER ')'
+
+    IDENTIFIER  shift, and go to state 37
+
+
+state 30
+
+   13 finally_clause: FINALLY block .
+
+    $default  reduce using rule 13 (finally_clause)
+
+
+state 31
+
+   10 catch_clause: catch_formal_param block .
+
+    $default  reduce using rule 10 (catch_clause)
+
+
+state 32
+
+   18 expression_statement: IDENTIFIER IDENTIFIER '=' . INTEGER_LITERAL OPERATOR INTEGER_LITERAL ';'
+
+    INTEGER_LITERAL  shift, and go to state 38
+
+
+state 33
+
+   19 expression_statement: IDENTIFIER '=' INTEGER_LITERAL . ';'
+
+    ';'  shift, and go to state 39
+
+
+state 34
+
+   17 expression_statement: THROW IDENTIFIER ';' .
+
+    $default  reduce using rule 17 (expression_statement)
+
+
+state 35
+
+   21 print_statement: PRINT '(' STRING_LITERAL . ')' ';'
+
+    ')'  shift, and go to state 40
+
+
+state 36
+
+   20 expression_statement: IF '(' IDENTIFIER . OPERATOR IDENTIFIER ')' block
+
+    OPERATOR  shift, and go to state 41
+
+
+state 37
+
+   11 catch_formal_param: CATCH '(' IDENTIFIER . IDENTIFIER ')'
+   12                   | CATCH '(' IDENTIFIER . ')'
+
+    IDENTIFIER  shift, and go to state 42
+    ')'         shift, and go to state 43
+
+
+state 38
+
+   18 expression_statement: IDENTIFIER IDENTIFIER '=' INTEGER_LITERAL . OPERATOR INTEGER_LITERAL ';'
+
+    OPERATOR  shift, and go to state 44
+
+
+state 39
+
+   19 expression_statement: IDENTIFIER '=' INTEGER_LITERAL ';' .
+
+    $default  reduce using rule 19 (expression_statement)
+
+
+state 40
+
+   21 print_statement: PRINT '(' STRING_LITERAL ')' . ';'
+
+    ';'  shift, and go to state 45
+
+
+state 41
+
+   20 expression_statement: IF '(' IDENTIFIER OPERATOR . IDENTIFIER ')' block
+
+    IDENTIFIER  shift, and go to state 46
+
+
+state 42
+
+   11 catch_formal_param: CATCH '(' IDENTIFIER IDENTIFIER . ')'
+
+    ')'  shift, and go to state 47
+
+
+state 43
+
+   12 catch_formal_param: CATCH '(' IDENTIFIER ')' .
+
+    $default  reduce using rule 12 (catch_formal_param)
+
+
+state 44
+
+   18 expression_statement: IDENTIFIER IDENTIFIER '=' INTEGER_LITERAL OPERATOR . INTEGER_LITERAL ';'
+
+    INTEGER_LITERAL  shift, and go to state 48
+
+
+state 45
+
+   21 print_statement: PRINT '(' STRING_LITERAL ')' ';' .
+
+    $default  reduce using rule 21 (print_statement)
+
+
+state 46
+
+   20 expression_statement: IF '(' IDENTIFIER OPERATOR IDENTIFIER . ')' block
+
+    ')'  shift, and go to state 49
+
+
+state 47
+
+   11 catch_formal_param: CATCH '(' IDENTIFIER IDENTIFIER ')' .
+
+    $default  reduce using rule 11 (catch_formal_param)
+
+
+state 48
+
+   18 expression_statement: IDENTIFIER IDENTIFIER '=' INTEGER_LITERAL OPERATOR INTEGER_LITERAL . ';'
+
+    ';'  shift, and go to state 50
+
+
+state 49
+
+   20 expression_statement: IF '(' IDENTIFIER OPERATOR IDENTIFIER ')' . block
+
+    '{'  shift, and go to state 4
+
+    block  go to state 51
+
+
+state 50
+
+   18 expression_statement: IDENTIFIER IDENTIFIER '=' INTEGER_LITERAL OPERATOR INTEGER_LITERAL ';' .
+
+    $default  reduce using rule 18 (expression_statement)
+
+
+state 51
+
+   20 expression_statement: IF '(' IDENTIFIER OPERATOR IDENTIFIER ')' block .
+
+    $default  reduce using rule 20 (expression_statement)
